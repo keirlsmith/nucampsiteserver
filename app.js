@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const passport = require('passport');
+const authenticate = require('./authenticate');
 
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
@@ -44,6 +46,8 @@ app.use('/users', usersRouter);
 app.use('/campsites', campsiteRouter);
 app.use('/promotions', promotionRouter);
 app.use('/partners', partnerRouter);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -68,22 +72,17 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter)
 
 function auth(req, res, next) {
-  console.log(req.session);
+  console.log(req.user);
 
-  if (!req.session.user) {
-      const err = new Error('You are not authenticated!');
+  if (!req.user) {
+      const err = new Error('You are not authenticated!');                    
       err.status = 401;
       return next(err);
   } else {
-      if (req.session.user === 'authenticated') {
-          return next();
-      } else {
-          const err = new Error('You are not authenticated!');
-          err.status = 401;
-          return next(err);
-      }
+      return next();
   }
 }
+
 
 app.use(auth);
 res.locals.message = err.message;
