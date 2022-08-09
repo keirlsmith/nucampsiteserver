@@ -12,9 +12,13 @@ const commentSchema = new Schema({
         max: 5,
         required: true
     },
-    author: {
+    text: {
         type: String,
         required: true
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 }, {
     timestamps: true
